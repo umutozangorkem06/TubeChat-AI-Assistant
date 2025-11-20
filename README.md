@@ -304,18 +304,21 @@ This project follows Python best practices:
 - **Retrieval**: Top 4 chunks are retrieved for each question (configurable in `rag_engine.py`)
 - **Embedding Model**: Uses `text-embedding-ada-002` for fast and cost-effective embeddings
 
-## 🚀 Future Enhancements
+## 🚧 Roadmap & Future Improvements
 
-Potential improvements for future versions:
+This project is currently an MVP (Minimum Viable Product). Based on my testing and current limitations, here are the planned updates:
 
-- Support for multiple videos in a single session
-- Conversation history persistence
-- Export chat conversations
-- Support for video playlists
-- Custom chunk size and overlap configuration
-- Support for other LLM providers
-- Batch processing for multiple videos
-- Transcript language detection and translation
+- [ ] **Add Local LLM Support (Cost Optimization):** - Plan to integrate `Ollama` or `HuggingFace` models to replace OpenAI, allowing the app to run completely free and locally.
+  
+- [ ] **Handle Videos without Captions (Audio Processing):**
+  - Currently, the app relies on YouTube subtitles. I plan to integrate `OpenAI Whisper` to generate transcripts from audio when no subtitles are available.
+  
+- [ ] **Chat Memory (LangChain):**
+  - Implement `ConversationBufferMemory` so the AI remembers previous questions in the chat session (currently it treats every question independently).
+
+## 🐛 Known Limitations
+* Some YouTube videos restrict backend access to transcripts via API.
+* The context window is limited to ~4000 tokens (GPT-3.5 default), so very long videos might lose some detail during chunking.
 
 ## 📄 License
 
@@ -355,7 +358,7 @@ If you encounter any issues or have questions:
 2. Review the error messages for specific guidance
 3. Ensure all dependencies are correctly installed
 4. Verify your API key and internet connection
-5. Reach me out - www.linkedin.com/in/umutozangorkem/
+5. Reach me out - www.linkedin.com/in/umutozangorkem/ 
 ---
 
 **Note**: This application uses OpenAI's API, which requires an API key and may incur costs. Please review [OpenAI's pricing](https://openai.com/pricing) before extensive use. Always keep your API keys secure and never share them publicly.
