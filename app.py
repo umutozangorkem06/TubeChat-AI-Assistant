@@ -1,5 +1,5 @@
 """
-TubeChat - RAG Application for YouTube Videos
+TubeChat - RAG Application for YouTube Videos :0
 
 Main Streamlit application that allows users to:
 1. Input a YouTube video URL
