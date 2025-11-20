@@ -355,7 +355,7 @@ If you encounter any issues or have questions:
 2. Review the error messages for specific guidance
 3. Ensure all dependencies are correctly installed
 4. Verify your API key and internet connection
-
+5. Reach me out - www.linkedin.com/in/umutozangorkem/
 ---
 
 **Note**: This application uses OpenAI's API, which requires an API key and may incur costs. Please review [OpenAI's pricing](https://openai.com/pricing) before extensive use. Always keep your API keys secure and never share them publicly.
