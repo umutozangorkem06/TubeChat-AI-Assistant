@@ -1,29 +1,13 @@
-"""
-TubeChat - RAG Application for YouTube Videos :0
-
-Main Streamlit application that allows users to:
-1. Input a YouTube video URL
-2. Process the video transcript
-3. Chat with the video content using RAG (Retrieval-Augmented Generation)
-
-This application uses:
-- Streamlit for the web UI
-- LangChain for RAG orchestration
-- OpenAI API for embeddings and question answering
-- FAISS for vector storage
-- youtube-transcript-api for fetching video transcripts
-"""
-
 import streamlit as st
 import os
 from dotenv import load_dotenv
 from utils import validate_youtube_url, fetch_transcript
 from rag_engine import RAGEngine
 
-# Load environment variables
+
 load_dotenv()
 
-# Page configuration
+
 st.set_page_config(
     page_title="TubeChat - Chat with YouTube Videos",
     page_icon="🎥",
@@ -31,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better UI
+
 st.markdown("""
     <style>
     .main-header {
@@ -96,18 +80,18 @@ def reset_chat():
 def main():
     """Main application function."""
     
-    # Header
+
     st.markdown('<h1 class="main-header">🎥 TubeChat</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="sub-header">Chat with YouTube videos using AI-powered RAG (Retrieval-Augmented Generation)</p>',
         unsafe_allow_html=True
     )
     
-    # Sidebar for configuration
+    
     with st.sidebar:
         st.header("⚙️ Configuration")
         
-        # API Key input
+       
         api_key_source = st.radio(
             "API Key Source",
             ["Enter Manually", "Load from .env"],
@@ -135,7 +119,7 @@ def main():
         
         st.divider()
         
-        # Video URL input
+       
         st.header("📹 Video Input")
         video_url = st.text_input(
             "YouTube Video URL",
@@ -151,14 +135,14 @@ def main():
             use_container_width=True
         )
         
-        # Reset button
+      
         if st.button("🔄 Reset Chat", use_container_width=True):
             reset_chat()
             st.rerun()
         
         st.divider()
         
-        # Information section
+     
         st.header("ℹ️ About")
         st.info("""
         **TubeChat** uses RAG (Retrieval-Augmented Generation) to let you chat with YouTube videos.
@@ -172,7 +156,7 @@ def main():
         **Note:** Videos must have captions/transcripts enabled.
         """)
         
-        # Status section
+       
         if st.session_state.video_processed:
             st.divider()
             st.header("📊 Status")
@@ -180,7 +164,7 @@ def main():
             if st.session_state.transcript_length > 0:
                 st.metric("Transcript Length", f"{st.session_state.transcript_length:,} characters")
     
-    # Main content area
+   
     if not api_key:
         st.warning("⚠️ Please enter your OpenAI API key in the sidebar to get started.")
         st.info("💡 You can get an API key from [OpenAI Platform](https://platform.openai.com/api-keys)")
@@ -205,7 +189,7 @@ def main():
         """)
         return
     
-    # Process video if button is clicked
+
     if process_button and video_url:
         with st.spinner("🔄 Processing video transcript..."):
             try:
@@ -221,38 +205,38 @@ def main():
                     """)
                     return
                 
-                # Fetch transcript
+               
                 transcript = fetch_transcript(video_id)
                 
                 if not transcript:
                     st.error("❌ Could not fetch transcript. The video may not have captions.")
                     return
                 
-                # Initialize RAG engine
+              
                 st.session_state.rag_engine = RAGEngine(api_key)
                 
-                # Create vector store
+              
                 with st.spinner("🔄 Creating embeddings and vector store..."):
                     st.session_state.rag_engine.create_vector_store(transcript)
                 
-                # Update session state
+              
                 st.session_state.video_processed = True
                 st.session_state.video_id = video_id
                 st.session_state.video_url = video_url
                 st.session_state.transcript_length = len(transcript)
                 
-                # Clear previous messages
+              
                 st.session_state.messages = []
                 
                 st.success(f"✅ Video processed successfully! Transcript length: {len(transcript):,} characters")
                 st.info("💬 You can now start asking questions about the video!")
-                st.balloons()  # Celebration animation
+                st.balloons()  
                 
             except ValueError as e:
                 error_msg = str(e)
                 st.error(f"❌ Error: {error_msg}")
                 
-                # Provide specific guidance based on error type
+              
                 if "quota" in error_msg.lower() or "billing" in error_msg.lower():
                     st.warning("""
                     **API Quota Exceeded**
@@ -274,7 +258,7 @@ def main():
                 error_msg = str(e)
                 st.error(f"❌ An unexpected error occurred: {error_msg}")
                 
-                # Check for OpenAI API errors in the exception message
+              
                 if "insufficient_quota" in error_msg.lower() or "429" in error_msg.lower():
                     st.warning("""
                     **OpenAI API Quota/Billing Issue**
@@ -287,35 +271,35 @@ def main():
                 else:
                     st.info("💡 Please check your API key and try again. If the problem persists, try a different video.")
     
-    # Chat interface
+    
     if st.session_state.video_processed and st.session_state.rag_engine:
         st.divider()
         st.header("💬 Chat with the Video")
         
-        # Display video info
+        
         video_id = st.session_state.video_id
         embed_url = f"https://www.youtube.com/embed/{video_id}"
         
-        # Video player
+        
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.components.v1.iframe(embed_url, width=700, height=400)
         
         st.caption(f"Video ID: {video_id}")
         
-        # Display chat messages
+       
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
         
-        # Chat input
+        
         if prompt := st.chat_input("Ask a question about the video..."):
-            # Add user message to chat history
+      
             st.session_state.messages.append({"role": "user", "content": prompt})
             with st.chat_message("user"):
                 st.markdown(prompt)
             
-            # Generate response
+           
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
                     try:
@@ -334,7 +318,7 @@ def main():
     else:
         st.info("👈 Enter a YouTube video URL in the sidebar to get started!")
         
-        # Example section
+      
         with st.expander("📚 Example Questions to Try"):
             st.markdown("""
             Once you process a video, you can ask questions like:
@@ -347,7 +331,7 @@ def main():
             - "List the steps mentioned in the video"
             """)
         
-        # Features section
+     
         st.markdown("""
         ### ✨ Features
         
